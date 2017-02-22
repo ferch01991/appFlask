@@ -1,0 +1,9 @@
+{% extends 'base/base.html' %}
+{% block title %} Template Cliente {% endblock %}
+
+{% block content %}
+<h1>Hola mundo</h1>
+  {% for item in list_name %}
+    <p>{{ item }}</p>
+  {% endfor %}
+{% endblock %}
