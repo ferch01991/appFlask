@@ -27,7 +27,7 @@ def page_not_found(e):
     return render_template('404.html', title=title)
 
 # conexion a una base de datos
-@app.before_request
+#@app.before_request
 
 @app.route('/ajax-login', methods=['POST'])
 def ajax_login():
@@ -35,6 +35,7 @@ def ajax_login():
     username=request.form['username']
     response={'status': 200, 'username': username, 'id': 1}
     return json.dumps(response)
+
 
 
 @app.route('/login', methods = ['GET', 'POST'])
