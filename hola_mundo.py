@@ -10,6 +10,9 @@ from flask_wtf.csrf import CSRFProtect
 
 from config import DevelopmentConfig
 
+from models import db
+from models import User
+
 from flask import flash
 from flask import url_for
 from flask import redirect
@@ -18,6 +21,7 @@ import forms
 import json
 
 app = Flask(__name__)
+# configuraciones de config
 app.config.from_object(DevelopmentConfig)
 csrf = CSRFProtect()
 
@@ -36,6 +40,19 @@ def ajax_login():
     response={'status': 200, 'username': username, 'id': 1}
     return json.dumps(response)
 
+@app.route('/create', methods=['GET', 'POST'])
+def create():
+    create_form = form.CreateForm(request.form)
+    if request.method == 'POST' and create_form.validate():
+        user = User(username = create_form.username.data,
+                    password = create_form.password.data,
+                    email = create_form.email.data)
+        db.session.add(user)
+        db.session.comment()
+        success_message = 'Usuario registrado en la base de datos'
+        flash(success_message)
+
+    return render_template('create.html', form = create_form)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -83,5 +100,10 @@ def index():
 
 
 if __name__ == '__main__':
+    # Inicie las apliciones con las configiraciones 
     csrf.init_app(app)
-    app.run(port=8000 )
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+        
+    app.run(port=8000)
