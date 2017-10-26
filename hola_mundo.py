@@ -30,8 +30,11 @@ def page_not_found(e):
     title = 'Page no found'
     return render_template('404.html', title=title)
 
-# conexion a una base de datos
-#@app.before_request
+# antes que una peticion se procece, para validar usuarios o redirigir, condiciones que se deben ejecutar antes de responder al cliente
+@app.before_request
+def before_request():
+    pass
+
 
 @app.route('/ajax-login', methods=['POST'])
 def ajax_login():
@@ -40,19 +43,22 @@ def ajax_login():
     response={'status': 200, 'username': username, 'id': 1}
     return json.dumps(response)
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['GET' ,'POST'])
 def create():
-    create_form = form.CreateForm(request.form)
+    title = 'Nuevo'
+    create_form = forms.CreateForm(request.form)
+    #print request.method
     if request.method == 'POST' and create_form.validate():
         user = User(username = create_form.username.data,
                     password = create_form.password.data,
                     email = create_form.email.data)
+        print user
         db.session.add(user)
-        db.session.comment()
+        db.session.commit()
         success_message = 'Usuario registrado en la base de datos'
         flash(success_message)
 
-    return render_template('create.html', form = create_form)
+    return render_template('create.html', form = create_form, title=title)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
