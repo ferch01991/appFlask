@@ -47,11 +47,11 @@ def ajax_login():
 def create():
     title = 'Nuevo'
     create_form = forms.CreateForm(request.form)
-    #print request.method
     if request.method == 'POST' and create_form.validate():
-        user = User(username = create_form.username.data,
-                    password = create_form.password.data,
-                    email = create_form.email.data)
+        user = User(create_form.username.data,
+                    create_form.password.data,
+                    create_form.email.data )
+
         print user
         db.session.add(user)
         db.session.commit()
