@@ -32,13 +32,16 @@ def page_not_found(e):
 
 # antes que una peticion se procece, para validar usuarios o redirigir, condiciones que se deben ejecutar antes de responder al cliente
 @app.before_request
-def before_request():
-    pass
+def before_request():    
+    if 'username' not in session and request.endpoint in ['comment']:
+        return redirect(url_for('login'))
+    elif 'username' in session and request.endpoint in ['login', 'create']:
+        return redirect(url_for('index'))
 
 
 @app.route('/ajax-login', methods=['POST'])
 def ajax_login():
-    print (request.form)
+    #print request.form
     username=request.form['username']
     response={'status': 200, 'username': username, 'id': 1}
     return json.dumps(response)
@@ -65,11 +68,26 @@ def create():
 def login():
     title = 'Autenticacion'
     login_form = forms.LoginForm(request.form)
+    print request.method
     if request.method == 'POST' and login_form.validate():
         username = login_form.username.data
-        success_message = 'Bienvenido {}'.format(username)
+        password = login_form.password.data
+        print 'aqui esta'
+        
+        user = User.query.filter_by(username = username).first()
+        if user is not None and user.verify_password(password):
+            success_message = 'Bienvenido {}'.format(username)
+            flash(success_message)
+            session['username'] = username
+            # redirecciona al index una ves logeado
+            return redirect(url_for('index'))
+
+        else:
+            error_message = 'Usuario o contraseña no valida'
+            flash(error_message)
+
         session['username'] = login_form.username.data
-        flash(success_message)
+    
     return render_template('login.html', form = login_form, title=title)
 
 @app.route('/logout')
