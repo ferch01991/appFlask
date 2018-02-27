@@ -1,10 +1,10 @@
 $(document).ready(function(){
-
+  
   function ajax_login() {
     $.ajax({
       url: '/ajax-login',
       data: $('form').serialize(),
-      type: 'POST',
+      method: 'POST',
       success: function(response) {
         console.log(response);
       },
@@ -15,8 +15,6 @@ $(document).ready(function(){
   }
 
   $("#login-form").submit(function(event) {
-    event.preventDefault();
     ajax_login();
-  })
-  
+  });
 });

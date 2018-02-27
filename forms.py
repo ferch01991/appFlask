@@ -23,6 +23,8 @@ class CommentForm(Form):
                 ])
     comment = TextField('Comentario')
     honeypot = HiddenField('', [length_honeypot])
+
+
 class LoginForm(Form):
     username = StringField('Nombre de usuario',
                         [
